@@ -1,0 +1,7 @@
+python-dotenv
+pylint
+black
+pytest
+pandas
+numpy
+matplotlib
