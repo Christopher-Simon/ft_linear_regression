@@ -3,5 +3,7 @@ pylint
 black
 pytest
 pandas
+pandas-stubs
 numpy
 matplotlib
+scikit-learn

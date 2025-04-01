@@ -42,6 +42,10 @@ test: $(VENV)/bin/activate
 clean:
 	rm -rf $(VENV) __pycache__ .pytest_cache
 
+# run a command in the venv
+venv_command: $(VENV)/bin/activate
+	$(VENV)/bin/python $(CMD)
+
 re: clean install
 
 .PHONY: install run lint format test clean re

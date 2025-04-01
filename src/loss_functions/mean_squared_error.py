@@ -8,16 +8,39 @@ the slope and intercept, and the sum of squared residuals.
 
 from typing import Callable
 
+from loss_functions.protocol_loss_fn import LossFunction
 
-class MeanSquaredError:
+
+class MeanSquaredError(LossFunction):
     """
     Class to calculate the Mean Squared Error (MSE) loss function.
     """
 
-    def derived_mse_b(
+    def loss(
         self,
-        x_list: list,
-        y_list: list,
+        x_list: list[float],
+        y_list: list[float],
+        estimate_func: Callable[[float], float],
+    ) -> float:
+        """
+        Calculate the Mean Squared Error (MSE) between observed and predicted\
+        values.
+        :param x_list: List of input values
+        :param y_list: List of observed values
+        :param estimate_func: Function to estimate the predicted values
+        :return: Mean Squared Error
+        """
+        sum_squared_residuals = 0
+        m = len(x_list)
+        for x, y in zip(x_list, y_list):
+            residual = estimate_func(x) - y
+            sum_squared_residuals += residual**2
+        return sum_squared_residuals / m
+
+    def derived_b(
+        self,
+        x_list: list[float],
+        y_list: list[float],
         estimate_func: Callable[[float], float],
     ) -> float:
         """
@@ -34,10 +57,10 @@ class MeanSquaredError:
             sum_d_f_b += d_f_b
         return sum_d_f_b / m
 
-    def derived_mse_a(
+    def derived_w(
         self,
-        x_list: list,
-        y_list: list,
+        x_list: list[float],
+        y_list: list[float],
         estimate_func: Callable[[float], float],
     ) -> float:
         """
