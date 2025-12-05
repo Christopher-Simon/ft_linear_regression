@@ -24,7 +24,6 @@ def model_comparison():
     data: DataFrame = pd.read_csv("data/data.csv")
 
     z_score_normalizer = ZScoreNormalizer(data)
-    z_score_normalizer.get_main_values()
 
     normalized_data: DataFrame = z_score_normalizer.transform()
 

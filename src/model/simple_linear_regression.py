@@ -94,7 +94,11 @@ class SimpleLinearRegression:
             loss = self.loss_fn.loss(x_list, y_list, self.estimate_price)
 
             if tmp_loss and abs(loss - tmp_loss) < min_loss:
-                print(f"Converged at iteration {i}")
+                print(f"Converged after {i} iterations")
+                break
+
+            if tmp_loss and loss < min_loss:
+                print(f"Too big learning rate : Converged after {i} iterations")
                 break
 
             tmp_loss = loss
@@ -109,9 +113,6 @@ class SimpleLinearRegression:
 
             if i % 10 == 0:
                 loss_values.append(loss)
-                print(
-                    f"Iteration {i}: slope: {self.slope:.2f}, intercept: {self.intercept:.2f}"
-                )
                 ax_loss.clear()
                 ax_loss.set_title("Loss over iterations")
                 ax_loss.set_xlabel("Iteration")

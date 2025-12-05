@@ -18,11 +18,9 @@ def scaling_viz() -> None:
     data: DataFrame = pd.read_csv("data/data.csv")
     plot_file_data(data)
     minmax_normalizer = MinMaxNormalizer(data)
-    minmax_normalizer.get_main_values()
     plot_file_data(minmax_normalizer.transform(), title="MinMax Normalization")
 
     z_score_normalizer = ZScoreNormalizer(data)
-    z_score_normalizer.get_main_values()
     plot_file_data(z_score_normalizer.transform(), title="Z-Score Normalization")
 
     plt.show()

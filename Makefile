@@ -4,11 +4,6 @@
 #																			#
 #///////////////////////////////////////////////////////////////////////////#
 
-
-DOCKER_COMPOSE_FILE := docker-compose.yml
-SERVICE_NAME := ft_linear_regression
-CONTAINER_NAME := ft_linear_container
-IMAGE_NAME := ft_linear_image
 PYTHON_SRC_DIR := src
 
 VENV := .venv
@@ -21,10 +16,12 @@ PIP := $(VENV)/bin/pip
 #																			#
 #///////////////////////////////////////////////////////////////////////////#
 
+all: install run
+
 $(VENV)/bin/activate:
 	$(PYTHON) -m venv $(VENV)
 
-install: $(VENV)/bin/activate requirements.txt
+install: $(VENV)/bin/activate
 	$(PIP) install -r requirements.txt
 
 run: $(VENV)/bin/activate
@@ -42,7 +39,8 @@ test: $(VENV)/bin/activate
 clean:
 	rm -rf $(VENV) __pycache__ .pytest_cache
 
-# run a command in the venv
+fclean: clean
+
 venv_command: $(VENV)/bin/activate
 	$(VENV)/bin/python $(CMD)
 

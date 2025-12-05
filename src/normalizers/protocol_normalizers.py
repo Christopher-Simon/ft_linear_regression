@@ -7,19 +7,6 @@ from typing import Protocol
 import pandas as pd
 
 
-class ColumnsMetrics:
-    """
-    A class to hold the metrics of columns in a DataFrame.
-    It is used to store the mean, standard deviation, min, and max values of columns.
-    """
-
-    def __init__(self, mean: float, std: float, min_val: float, max_val: float) -> None:
-        self.mean = mean
-        self.std = std
-        self.min = min_val
-        self.max = max_val
-
-
 class Normalizer(Protocol):
     """
     A protocol (interface-like) definition for normalizers.

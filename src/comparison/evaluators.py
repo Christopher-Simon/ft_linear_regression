@@ -23,7 +23,6 @@ def evaluators_comparison():
     data: DataFrame = pd.read_csv("data/data.csv")
 
     z_score_normalizer = ZScoreNormalizer(data)
-    z_score_normalizer.get_main_values()
     normalize_data: DataFrame = z_score_normalizer.transform()
 
     model.fit(

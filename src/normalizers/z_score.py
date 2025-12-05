@@ -20,12 +20,10 @@ class ZScoreNormalizer(Normalizer):
         """
         Get the mean, deviation, min and max values of the DataFrame.
         """
-        # print mean, std, min and max values of the km column
         print("km mean: ", self.data["km"].mean)
         print("km std: ", self.data["km"].std)
         print("km min: ", self.data["km"].min)
         print("km max: ", self.data["km"].max)
-        # print mean, std, min and max values of the price column
         print("price mean: ", self.data["price"].mean)
         print("price std: ", self.data["price"].std)
         print("price min: ", self.data["price"].min)
