@@ -2,74 +2,34 @@
 Z-score Normalization
 """
 
-import pandas as pd
+import numpy as np
+from pydantic import BaseModel
+
 from normalizers.protocol_normalizers import Normalizer
 
 
-class ZScoreNormalizer(Normalizer):
-    """
-    Z-score normalization for pandas DataFrames:
-        z = (x - mean) / std
-    """
+class ZScoreParams(BaseModel):
+    mean: float = 0.0
+    std: float = 1.0
 
-    def __init__(self, data: pd.DataFrame) -> None:
-        self.data: pd.DataFrame = data
-        self.normalized_data: pd.DataFrame = data.copy()
 
-    def get_main_values(self) -> None:
-        """
-        Get the mean, deviation, min and max values of the DataFrame.
-        """
-        print("km mean: ", self.data["km"].mean)
-        print("km std: ", self.data["km"].std)
-        print("km min: ", self.data["km"].min)
-        print("km max: ", self.data["km"].max)
-        print("price mean: ", self.data["price"].mean)
-        print("price std: ", self.data["price"].std)
-        print("price min: ", self.data["price"].min)
-        print("price max: ", self.data["price"].max)
+class ZScoreNormalizer(Normalizer[ZScoreParams]):
+    def __init__(self, params: ZScoreParams | None = None) -> None:
+        self.params = params if params is not None else ZScoreParams()
 
-    def transform(self) -> pd.DataFrame:
-        """
-        Transform the data using the learned parameters. This method should
-        apply the normalization to the data.
-        """
-        self.normalized_data["km"] = (
-            self.data["km"] - self.data["km"].mean()
-        ) / self.data["km"].std()
-        self.normalized_data["price"] = (
-            self.data["price"] - self.data["price"].mean()
-        ) / self.data["price"].std()
-        return self.normalized_data
+    def fit(self, x: np.ndarray) -> None:
+        if x.size == 0:
+            raise ValueError("Input array is empty")
 
-    def invert_km(self, km: float) -> float:
-        """
-        invert the km to its normalized value.
-        """
-        return (km - self.data["km"].mean()) / self.data["km"].std()
+        self.params.mean = float(np.mean(x))
+        std = float(np.std(x))
 
-    def invert_price(self, price: float) -> float:
-        """
-        invert the price to its normalized value.
-        """
-        return (price - self.data["price"].mean()) / self.data["price"].std()
+        if std == 0:
+            std = 1.0
+        self.params.std = std
 
-    def invert_weight_bias(
-        self,
-        weight: float,
-        bias: float,
-    ) -> tuple[float, float]:
-        """
-        invert the weight and bias to its normalized value.
-        """
-        return (
-            weight * (self.data["price"].std() / self.data["km"].std()),
-            self.data["price"].mean()
-            + self.data["price"].std() * bias
-            - (
-                self.data["price"].std()
-                / self.data["km"].std()
-                * self.data["km"].mean()
-                * weight
-            ),
-        )
+    def transform(self, x: np.ndarray) -> np.ndarray:
+        return (x - self.params.mean) / self.params.std
+
+    def inverse_transform(self, x: np.ndarray) -> np.ndarray:
+        return (x * self.params.std) + self.params.mean

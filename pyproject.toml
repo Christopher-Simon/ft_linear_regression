@@ -1,0 +1,37 @@
+[project]
+name = "ft-linear-regression"
+version = "0.1.0"
+description = "An introduction to machine learning with linear regression"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib>=3.10.8",
+    "numpy>=2.4.2",
+    "pandas>=3.0.0",
+    "pydantic>=2.12.5",
+    "python-dotenv>=1.2.1",
+    "scikit-learn>=1.8.0",
+]
+
+[dependency-groups]
+dev = [
+    "ipywidgets>=8.1.8",
+    "matplotlib-inline>=0.2.1",
+    "mypy>=1.8.0",
+    "pandas-stubs>=3.0.0.260204",
+    "pytest>=9.0.2",
+    "ruff>=0.1.0",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+# E: pycodestyle errors, F: Pyflakes, I: isort, N: pep8-naming, UP: pyupgrade, PL: Pylint subset
+select = ["E", "F", "I", "N", "UP", "PL"]
+ignore = []
+
+[tool.mypy]
+python_version = "3.11"
+strict = true

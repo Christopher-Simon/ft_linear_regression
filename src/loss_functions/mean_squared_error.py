@@ -6,7 +6,7 @@ It includes methods to compute the MSE, its derivative with respect to
 the slope and intercept, and the sum of squared residuals.
 """
 
-from typing import Callable
+from collections.abc import Callable
 
 from loss_functions.protocol_loss_fn import LossFunction
 
@@ -30,7 +30,7 @@ class MeanSquaredError(LossFunction):
         :param estimate_func: Function to estimate the predicted values
         :return: Mean Squared Error
         """
-        sum_squared_residuals = 0
+        sum_squared_residuals: float = 0
         m = len(x_list)
         for x, y in zip(x_list, y_list):
             residual = estimate_func(x) - y
@@ -50,7 +50,7 @@ class MeanSquaredError(LossFunction):
         This function calculates the derived MSE with respect to b.
         """
 
-        sum_d_f_b = 0
+        sum_d_f_b: float = 0
         m = len(x_list)
         for x, y in zip(x_list, y_list):
             d_f_b = estimate_func(x) - y
@@ -65,12 +65,12 @@ class MeanSquaredError(LossFunction):
     ) -> float:
         """
         The formula for the derived MSE with respect to a is:
-        dMSE/da = 1/M * sum((a * x + b) - y) * x
+        dMSE/dw = 1/M * sum((w * x + b) - y) * x
         where M is the number of data points.
-        This function calculates the derived MSE with respect to a.
+        This function calculates the derived MSE with respect to w.
         """
 
-        sum_d_f_w = 0
+        sum_d_f_w: float = 0
         m = len(x_list)
         for x, y in zip(x_list, y_list):
             d_f_w = (estimate_func(x) - y) * x

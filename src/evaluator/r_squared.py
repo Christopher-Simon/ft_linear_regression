@@ -2,15 +2,10 @@
 A r-squared evaluator for evaluating the performance of regression models.
 """
 
-from typing import List
-import pandas as pd
-import matplotlib.pyplot as plt
-from visualisation.data_graph import plot_file_data
-
 
 def r_squared(
-    x_list: List[float],
-    y_true: List[float],
+    x_list: list[float],
+    y_true: list[float],
     line_params: tuple[float, float],
 ) -> float:
     """
@@ -29,13 +24,15 @@ def r_squared(
     if len(x_list) != len(y_true):
         raise ValueError("x_list and y_true must have the same length.")
 
+    if len(y_true) == 0:
+        raise ValueError("Input lists cannot be empty.")
+
     y_mean = sum(y_true) / len(y_true)
 
     slope, intercept = line_params
 
     y_predicted = [slope * x + intercept for x in x_list]
 
-    y_mean = sum(y_true) / len(y_true)
     ssr = sum((y_true[i] - y_predicted[i]) ** 2 for i in range(len(y_true)))
     sst = sum((y - y_mean) ** 2 for y in y_true)
 
@@ -43,14 +40,5 @@ def r_squared(
         r_squared_value = 0.0
     else:
         r_squared_value = 1 - (ssr / sst)
-
-    plot_file_data(
-        data=pd.DataFrame({"km": x_list, "price": y_true}),
-        title="R-squared Evaluation",
-        x_label="Km Driven",
-        y_label="Price (€)",
-        line_params=[line_params, (0, y_mean)],
-    )
-    plt.show()
 
     return r_squared_value

@@ -1,81 +1,36 @@
 """
-Min-Max Normalization"""
+Min-Max Normalization
+"""
 
-import pandas as pd
+import numpy as np
+from pydantic import BaseModel
+
 from normalizers.protocol_normalizers import Normalizer
 
 
-class MinMaxNormalizer(Normalizer):
-    """
-    Min-Max normalization for pandas DataFrames:
-        x_norm = (x - min) / (max - min)
-    """
+class MinMaxParams(BaseModel):
+    min: float = 0.0
+    max: float = 1.0
+    range: float = 1.0
 
-    def __init__(self, data: pd.DataFrame) -> None:
-        self.data: pd.DataFrame = data
-        self.normalized_data: pd.DataFrame = data.copy()
 
-    def get_main_values(self) -> None:
-        """
-        Get the mean, deviation, min and max values of the DataFrame.
-        """
-        print("km mean: ", self.data["km"].mean)
-        print("km std: ", self.data["km"].std)
-        print("km min: ", self.data["km"].min)
-        print("km max: ", self.data["km"].max)
-        print("price mean: ", self.data["price"].mean)
-        print("price std: ", self.data["price"].std)
-        print("price min: ", self.data["price"].min)
-        print("price max: ", self.data["price"].max)
+class MinMaxNormalizer(Normalizer[MinMaxParams]):
+    def __init__(self, params: MinMaxParams | None = None) -> None:
+        self.params = params if params is not None else MinMaxParams()
 
-    def transform(self) -> pd.DataFrame:
-        """
-        Transform the data using the learned parameters. This method should
-        apply the normalization to the data.
-        """
-        self.normalized_data["km"] = (self.data["km"] - self.data["km"].min()) / (
-            self.data["km"].max() - self.data["km"].min()
-        )
-        self.normalized_data["price"] = (
-            self.data["price"] - self.data["price"].min()
-        ) / (self.data["price"].max() - self.data["price"].min())
-        return self.normalized_data
+    def fit(self, x: np.ndarray) -> None:
+        if x.size == 0:
+            raise ValueError("Input array is empty")
 
-    def invert_km(self, km: float) -> float:
-        """
-        invert the km to its normalized value.
-        """
-        return (
-            km * (self.data["km"].max() - self.data["km"].min()) + self.data["km"].min()
-        )
+        self.params.min = float(np.min(x))
+        self.params.max = float(np.max(x))
+        self.params.range = self.params.max - self.params.min
 
-    def invert_price(self, price: float) -> float:
-        """
-        invert the price to its normalized value.
-        """
-        return (
-            price * (self.data["price"].max() - self.data["price"].min())
-            + self.data["price"].min()
-        )
+        if self.params.range == 0:
+            self.params.range = 1.0
 
-    def invert_weight_bias(
-        self,
-        weight: float,
-        bias: float,
-    ) -> tuple[float, float]:
-        """
-        invert the weight and bias to its normalized value.
-        """
+    def transform(self, x: np.ndarray) -> np.ndarray:
+        return (x - self.params.min) / self.params.range
 
-        original_weight = (
-            weight
-            * (self.data["price"].max() - self.data["price"].min())
-            / (self.data["km"].max() - self.data["km"].min())
-        )
-
-        return (
-            original_weight,
-            self.data["price"].min()
-            - original_weight * self.data["km"].min()
-            + (self.data["price"].max() - self.data["price"].min()) * bias,
-        )
+    def inverse_transform(self, x: np.ndarray) -> np.ndarray:
+        return (x * self.params.range) + self.params.min

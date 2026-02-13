@@ -1,49 +1,49 @@
 #///////////////////////////////////////////////////////////////////////////#
-#																			#
-#								VARIABLES									#
-#																			#
+#                               VARIABLES                                   #
 #///////////////////////////////////////////////////////////////////////////#
 
 PYTHON_SRC_DIR := src
 
-VENV := .venv
-PYTHON := python3
-PIP := $(VENV)/bin/pip
-
 #///////////////////////////////////////////////////////////////////////////#
-#																			#
-#								MANAGEMENT									#
-#																			#
+#                               MANAGEMENT                                  #
 #///////////////////////////////////////////////////////////////////////////#
 
-all: install run
+all: dev run
 
-$(VENV)/bin/activate:
-	$(PYTHON) -m venv $(VENV)
+dev:
+	uv sync
 
-install: $(VENV)/bin/activate
-	$(PIP) install -r requirements.txt
+run:
+	uv run python $(PYTHON_SRC_DIR)/main.py
 
-run: $(VENV)/bin/activate
-	$(VENV)/bin/python $(PYTHON_SRC_DIR)/main.py
+check:
+	uv run ruff check --fix src/
 
-lint: $(VENV)/bin/activate
-	$(VENV)/bin/pylint src/
+format:
+	uv run ruff format src/
 
-format: $(VENV)/bin/activate
-	$(VENV)/bin/black src/
+typecheck:
+	uv run mypy src/
 
-test: $(VENV)/bin/activate
-	$(VENV)/bin/pytest tests/
+lint:
+	@echo "Starting linting..." > lint.log
+	@echo "--- Ruff Check ---" >> lint.log
+	-uv run ruff check --fix src/ >> lint.log 2>&1
+	@echo "\n--- Ruff Format ---" >> lint.log
+	-uv run ruff format src/ >> lint.log 2>&1
+	@echo "\n--- Mypy ---" >> lint.log
+	-uv run mypy src/ >> lint.log 2>&1
+	@echo "Linting complete. Check 'lint.log' for details."
+
+test:
+	uv run pytest -s -vv src/tests/
 
 clean:
-	rm -rf $(VENV) __pycache__ .pytest_cache
+	rm -rf .venv .pytest_cache .ruff_cache .mypy_cache __pycache__
+	find . -type d -name "__pycache__" -exec rm -rf {} +
 
 fclean: clean
 
-venv_command: $(VENV)/bin/activate
-	$(VENV)/bin/python $(CMD)
+re: clean dev
 
-re: clean install
-
-.PHONY: install run lint format test clean re
+.PHONY: dev run lint format typecheck test clean fclean re

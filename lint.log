@@ -1,0 +1,87 @@
+Starting linting...
+--- Ruff Check ---
+PLR0915 Too many statements (54 > 50)
+  --> src/math_dissection/math_dissect.ipynb:cell 3:23:5
+   |
+22 | # 3. Define the update function
+23 | def plot_regression(w, b):
+   |     ^^^^^^^^^^^^^^^
+24 |     # Create 2x2 subplots
+25 |     fig, axs = plt.subplots(2, 2, figsize=(16, 12))
+   |
+
+E501 Line too long (101 > 88)
+  --> src/tests/test_linear_regression.py:36:89
+   |
+34 |     # 3. Train Custom Model
+35 |     # Convert inputs to list[float] as per your model's requirement
+36 |     # We use a higher iteration count to ensure Gradient Descent gets close to the exact OLS solution
+   |                                                                                         ^^^^^^^^^^^^^
+37 |     model.fit(
+38 |         x_list=x.flatten().tolist(),
+   |
+
+E501 Line too long (91 > 88)
+  --> src/tests/test_linear_regression.py:46:89
+   |
+44 |     # 4. Compare Results
+45 |     # Check Slope (Coefficient)
+46 |     # Allow a small relative tolerance (1%) because GD is approximate vs OLS exact solution
+   |                                                                                         ^^^
+47 |     assert model.slope == pytest.approx(float(sk_model.coef_[0]), rel=5e-2)
+   |
+
+PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+   --> src/tests/test_linear_regression.py:105:26
+    |
+104 |     assert isinstance(preds, list)
+105 |     assert len(preds) == 2
+    |                          ^
+106 |     assert preds[0] == 21.0
+107 |     assert preds[1] == 41.0
+    |
+
+PLR2004 Magic value used in comparison, consider replacing `21.0` with a constant variable
+   --> src/tests/test_linear_regression.py:106:24
+    |
+104 |     assert isinstance(preds, list)
+105 |     assert len(preds) == 2
+106 |     assert preds[0] == 21.0
+    |                        ^^^^
+107 |     assert preds[1] == 41.0
+    |
+
+PLR2004 Magic value used in comparison, consider replacing `41.0` with a constant variable
+   --> src/tests/test_linear_regression.py:107:24
+    |
+105 |     assert len(preds) == 2
+106 |     assert preds[0] == 21.0
+107 |     assert preds[1] == 41.0
+    |                        ^^^^
+    |
+
+Found 7 errors (1 fixed, 6 remaining).
+
+--- Ruff Format ---
+24 files left unchanged
+
+--- Mypy ---
+src/tests/test_linear_regression.py:8: error: Skipping analyzing "sklearn.linear_model": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+src/tests/test_linear_regression.py:8: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
+src/tests/test_normalizers.py:8: error: Skipping analyzing "sklearn.preprocessing": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+src/visualisation/scaling_viz.py:12: error: Cannot find implementation or library stub for module named ".normalizers.minmax_normalizer"  [import-not-found]
+src/visualisation/scaling_viz.py:12: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
+src/visualisation/scaling_viz.py:13: error: Cannot find implementation or library stub for module named ".normalizers.z_score"  [import-not-found]
+src/main.py:14: error: Function is missing a return type annotation  [no-untyped-def]
+src/main.py:14: note: Use "-> None" if function does not return a value
+src/main.py:21: error: Too many arguments for "ZScoreNormalizer"  [call-arg]
+src/main.py:23: error: Missing positional argument "x" in call to "transform" of "ZScoreNormalizer"  [call-arg]
+src/main.py:23: error: Incompatible types in assignment (expression has type "ndarray[tuple[Any, ...], dtype[Any]]", variable has type "DataFrame")  [assignment]
+src/main.py:26: error: Unexpected keyword argument "normalizer" for "fit" of "SimpleLinearRegression"  [call-arg]
+src/main.py:34: error: Name "normalized_data" already defined on line 23  [no-redef]
+src/model/simple_linear_regression.py:40: note: "fit" of "SimpleLinearRegression" defined here
+src/main.py:32: error: Too many arguments for "MinMaxNormalizer"  [call-arg]
+src/main.py:34: error: Missing positional argument "x" in call to "transform" of "MinMaxNormalizer"  [call-arg]
+src/main.py:37: error: Unexpected keyword argument "normalizer" for "fit" of "SimpleLinearRegression"  [call-arg]
+src/main.py:53: error: Call to untyped function "main" in typed context  [no-untyped-call]
+Found 14 errors in 4 files (checked 22 source files)

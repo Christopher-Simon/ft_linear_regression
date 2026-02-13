@@ -2,8 +2,9 @@
 This module defines a protocol for loss functions used in machine learning.
 """
 
-from typing import Callable, Protocol
 from abc import abstractmethod
+from collections.abc import Callable
+from typing import Protocol
 
 
 class LossFunction(Protocol):
