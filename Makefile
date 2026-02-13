@@ -8,13 +8,10 @@ PYTHON_SRC_DIR := src
 #                               MANAGEMENT                                  #
 #///////////////////////////////////////////////////////////////////////////#
 
-all: dev run
+all: dev
 
 dev:
 	uv sync
-
-run:
-	uv run python $(PYTHON_SRC_DIR)/main.py
 
 check:
 	uv run ruff check --fix src/

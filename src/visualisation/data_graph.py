@@ -5,7 +5,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.figure import Figure
 
+from normalizers.minmax_normalizer import MinMaxParams
 from normalizers.protocol_normalizers import Normalizer
+from normalizers.z_score import ZScoreParams
+
+Normalizers = Normalizer[ZScoreParams] | Normalizer[MinMaxParams]
 
 
 @dataclass
@@ -21,8 +25,8 @@ class VisualizationData:
     z: np.ndarray
     w_range: np.ndarray
     b_range: np.ndarray
-    km_normalizer: Normalizer
-    price_normalizer: Normalizer
+    km_normalizer: Normalizers
+    price_normalizer: Normalizers
 
 
 @dataclass
@@ -50,8 +54,8 @@ def init_visualization(
     y: np.ndarray,
     x_raw: np.ndarray,
     y_raw: np.ndarray,
-    km_normalizer: Normalizer,
-    price_normalizer: Normalizer,
+    km_normalizer: Normalizers,
+    price_normalizer: Normalizers,
 ) -> VisualizationState:
     """
     Initializes the matplotlib figure and pre-calculates the cost surface.

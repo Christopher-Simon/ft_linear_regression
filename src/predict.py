@@ -18,7 +18,7 @@ def predict() -> None:
     Reads from model_weights.json, prompts for a mileage,
     normalizes the input, predicts, and inverse_transforms the result.
     """
-    model_file = "model_weights.json"
+    model_file = "model/model_weights.json"
 
     slope = 0.0
     intercept = 0.0

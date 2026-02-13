@@ -111,7 +111,7 @@ def train(dataset_path: str = "data/data.csv") -> None:
         "final_loss": final_loss,
     }
 
-    with open("model_weights.json", "w") as f:
+    with open("model/model_weights.json", "w") as f:
         json.dump(model_data, f, indent=4)
 
     print("==================================================")
