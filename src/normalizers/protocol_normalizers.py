@@ -8,7 +8,6 @@ from typing import Generic, TypeVar
 import numpy as np
 from pydantic import BaseModel
 
-# Create a Type Variable that must be a Pydantic BaseModel (or subclass)
 T = TypeVar("T", bound=BaseModel)
 
 

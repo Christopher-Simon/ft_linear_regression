@@ -5,6 +5,7 @@ Main module for the application.
 import json
 import os
 import sys
+from enum import StrEnum
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,8 +13,24 @@ import pandas as pd
 
 from evaluator.r_squared import r_squared
 from model.simple_linear_regression import SimpleLinearRegression
-from normalizers.z_score import ZScoreNormalizer
+from normalizers.minmax_normalizer import MinMaxNormalizer, MinMaxParams
+from normalizers.protocol_normalizers import Normalizer
+from normalizers.z_score import ZScoreParams
 from visualisation.data_graph import create_plot_callback, init_visualization
+
+
+class NormalizerType(StrEnum):
+    ZSCORE = "zscore"
+    MINMAX = "minmax"
+
+
+def get_normalizer_name(
+    normalizer: Normalizer[ZScoreParams] | Normalizer[MinMaxParams],
+) -> str:
+    """Returns the enum string based on the normalizer instance."""
+    if isinstance(normalizer, MinMaxNormalizer):
+        return NormalizerType.MINMAX.value
+    return NormalizerType.ZSCORE.value
 
 
 def load_and_clean_data(filepath: str) -> tuple[np.ndarray, np.ndarray]:
@@ -35,14 +52,11 @@ def load_and_clean_data(filepath: str) -> tuple[np.ndarray, np.ndarray]:
         print("Error: The dataset must contain 'km' and 'price' columns.")
         sys.exit(1)
 
-    # 1. Force everything to numbers (invalid text becomes NaN)
     data["km"] = pd.to_numeric(data["km"], errors="coerce")
     data["price"] = pd.to_numeric(data["price"], errors="coerce")
 
-    # 2. Drop any rows that have NaN values
     cleaned_data = data.dropna(subset=["km", "price"])
 
-    # 3. Check if we have enough data left
     if len(cleaned_data) < 2:
         print(
             f"Error: Insufficient valid data. Found {len(cleaned_data)} valid rows, "
@@ -62,8 +76,8 @@ def train(dataset_path: str = "data/data.csv") -> None:
     """
     x_raw, y_raw = load_and_clean_data(dataset_path)
 
-    km_normalizer = ZScoreNormalizer()
-    price_normalizer = ZScoreNormalizer()
+    km_normalizer = MinMaxNormalizer()
+    price_normalizer = MinMaxNormalizer()
     x = km_normalizer.fit_transform(x_raw)
     y = price_normalizer.fit_transform(y_raw)
 
@@ -81,8 +95,8 @@ def train(dataset_path: str = "data/data.csv") -> None:
     custom_model.fit(
         x_list=x.tolist(),
         y_list=y.tolist(),
-        learning_rate=0.05,
-        iterations=300,
+        learning_rate=0.1,
+        iterations=100000,
         callback=plot_callback,
     )
 
@@ -103,10 +117,9 @@ def train(dataset_path: str = "data/data.csv") -> None:
     model_data = {
         "slope": custom_model.slope,
         "intercept": custom_model.intercept,
-        "km_mean": km_normalizer.params.mean,
-        "km_std": km_normalizer.params.std,
-        "price_mean": price_normalizer.params.mean,
-        "price_std": price_normalizer.params.std,
+        "normalizer_type": get_normalizer_name(km_normalizer),
+        "km_params": km_normalizer.params.model_dump(),
+        "price_params": price_normalizer.params.model_dump(),
         "precision_r2": precision_r2,
         "final_loss": final_loss,
     }

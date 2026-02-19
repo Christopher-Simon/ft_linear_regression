@@ -61,6 +61,10 @@ class SimpleLinearRegression:
         """
 
         tmp_loss = None
+        iter = 0
+
+        if len(x_list) != len(y_list):
+            raise ValueError
 
         for i in range(iterations):
             loss = self.loss_fn.loss(x_list, y_list, self.estimate_price)
@@ -88,13 +92,14 @@ class SimpleLinearRegression:
 
             self.intercept -= t_b
             self.slope -= t_w
+            iter = i
 
         if callback:
             final_d_b = self.loss_fn.derived_b(x_list, y_list, self.estimate_price)
             final_d_w = self.loss_fn.derived_w(x_list, y_list, self.estimate_price)
             callback(
                 TrainingStep(
-                    step=iterations,
+                    step=iter,
                     w=self.slope,
                     b=self.intercept,
                     grad_w=final_d_w,

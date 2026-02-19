@@ -9,22 +9,31 @@ import sys
 import numpy as np
 
 from model.simple_linear_regression import SimpleLinearRegression
+from normalizers.minmax_normalizer import MinMaxNormalizer, MinMaxParams
+from normalizers.protocol_normalizers import Normalizer
 from normalizers.z_score import ZScoreNormalizer, ZScoreParams
 
 
-def predict() -> None:
-    """
-    Prediction program:
-    Reads from model_weights.json, prompts for a mileage,
-    normalizes the input, predicts, and inverse_transforms the result.
-    """
-    model_file = "model/model_weights.json"
+def get_normalizer(
+    name: str, params_dict: dict[str, float]
+) -> Normalizer[ZScoreParams] | Normalizer[MinMaxParams]:
+    """Factory function to dynamically reconstruct the correct normalizer."""
+    print("params_dict", params_dict)
+    if name == "minmax":
+        return MinMaxNormalizer(MinMaxParams(**params_dict))
 
+    return ZScoreNormalizer(ZScoreParams(**params_dict))
+
+
+def predict(model_file: str = "model_weights.json") -> None:
     slope = 0.0
     intercept = 0.0
-    km_params = ZScoreParams()
-    price_params = ZScoreParams()
     precision = None
+
+    # Defaults in case the file doesn't exist yet
+    norm_type = "zscore"
+    km_params_dict = {}
+    price_params_dict = {}
 
     if os.path.exists(model_file):
         try:
@@ -32,21 +41,22 @@ def predict() -> None:
                 data = json.load(f)
                 slope = data.get("slope", 0.0)
                 intercept = data.get("intercept", 0.0)
-
-                km_params = ZScoreParams(
-                    mean=data.get("km_mean", 0.0), std=data.get("km_std", 1.0)
-                )
-                price_params = ZScoreParams(
-                    mean=data.get("price_mean", 0.0), std=data.get("price_std", 1.0)
-                )
                 precision = data.get("precision_r2")
 
+                # Extract the dynamic dictionaries
+                norm_type = data.get("normalizer_type", "zscore")
+                km_params_dict = data.get("km_params", {})
+                price_params_dict = data.get("price_params", {})
+
         except json.JSONDecodeError:
-            print("Error: model_weights.json is corrupted. Using default weights (0).")
+            print(f"Error: {model_file} is corrupted. Using default weights (0).")
+    else:
+        print(f"Info: '{model_file}' not found. Using default weights (0).")
 
     model = SimpleLinearRegression(slope=slope, intercept=intercept)
-    km_normalizer = ZScoreNormalizer(km_params)
-    price_normalizer = ZScoreNormalizer(price_params)
+
+    km_normalizer = get_normalizer(norm_type, km_params_dict)
+    price_normalizer = get_normalizer(norm_type, price_params_dict)
 
     print("=========================================")
     print("        Car Price Predictor              ")
@@ -66,9 +76,10 @@ def predict() -> None:
                 continue
 
             km_norm = km_normalizer.transform(np.array([mileage]))[0]
+            print("km_norm", km_norm)
 
             price_norm = model.estimate_price(km_norm)
-
+            print("price_norm", price_norm)
             price_raw = price_normalizer.inverse_transform(np.array([price_norm]))[0]
 
             estimated_price = max(0.0, float(price_raw))
@@ -86,4 +97,5 @@ def predict() -> None:
 
 
 if __name__ == "__main__":
-    predict()
+    custom_path = sys.argv[1] if len(sys.argv) > 1 else "model_weights.json"
+    predict(custom_path)
