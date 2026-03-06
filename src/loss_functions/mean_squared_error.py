@@ -8,7 +8,7 @@ the slope and intercept, and the sum of squared residuals.
 
 from collections.abc import Callable
 
-from loss_functions.protocol_loss_fn import LossFunction
+from src.loss_functions.protocol_loss_fn import LossFunction
 
 
 class MeanSquaredError(LossFunction):

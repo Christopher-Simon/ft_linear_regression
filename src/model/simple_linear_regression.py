@@ -5,9 +5,9 @@ module for the simple linear regression model
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from loss_functions.mean_squared_error import MeanSquaredError
-from loss_functions.protocol_loss_fn import LossFunction
-from visualisation.data_graph import TrainingStep
+from src.loss_functions.mean_squared_error import MeanSquaredError
+from src.loss_functions.protocol_loss_fn import LossFunction
+from src.visualisation.data_graph import TrainingStep
 
 
 @dataclass

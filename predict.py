@@ -9,10 +9,10 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from model.simple_linear_regression import SimpleLinearRegression
-from normalizers.minmax_normalizer import MinMaxNormalizer, MinMaxParams
-from normalizers.protocol_normalizers import Normalizer
-from normalizers.z_score import ZScoreNormalizer, ZScoreParams
+from src.model.simple_linear_regression import SimpleLinearRegression
+from src.normalizers.minmax_normalizer import MinMaxNormalizer, MinMaxParams
+from src.normalizers.protocol_normalizers import Normalizer
+from src.normalizers.z_score import ZScoreNormalizer, ZScoreParams
 
 
 @dataclass

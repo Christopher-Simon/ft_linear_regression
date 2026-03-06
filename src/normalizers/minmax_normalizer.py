@@ -5,7 +5,7 @@ Min-Max Normalization
 import numpy as np
 from pydantic import BaseModel
 
-from normalizers.protocol_normalizers import Normalizer
+from src.normalizers.protocol_normalizers import Normalizer
 
 
 class MinMaxParams(BaseModel):

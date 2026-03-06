@@ -11,12 +11,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from evaluator.r_squared import r_squared
-from model.simple_linear_regression import SimpleLinearRegression
-from normalizers.minmax_normalizer import MinMaxParams
-from normalizers.protocol_normalizers import Normalizer
-from normalizers.z_score import ZScoreNormalizer, ZScoreParams
-from visualisation.data_graph import create_plot_callback, init_visualization
+from src.evaluator.r_squared import r_squared
+from src.model.simple_linear_regression import SimpleLinearRegression
+from src.normalizers.minmax_normalizer import MinMaxParams
+from src.normalizers.protocol_normalizers import Normalizer
+from src.normalizers.z_score import ZScoreNormalizer, ZScoreParams
+from src.visualisation.data_graph import create_plot_callback, init_visualization
 
 
 class NormalizerType(StrEnum):

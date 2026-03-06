@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.figure import Figure
 
-from normalizers.minmax_normalizer import MinMaxParams
-from normalizers.protocol_normalizers import Normalizer
-from normalizers.z_score import ZScoreParams
+from src.normalizers.minmax_normalizer import MinMaxParams
+from src.normalizers.protocol_normalizers import Normalizer
+from src.normalizers.z_score import ZScoreParams
 
 Normalizers = Normalizer[ZScoreParams] | Normalizer[MinMaxParams]
 

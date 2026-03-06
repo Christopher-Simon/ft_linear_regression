@@ -1,6 +1,6 @@
 from collections.abc import Callable
 
-from loss_functions.protocol_loss_fn import LossFunction
+from src.loss_functions.protocol_loss_fn import LossFunction
 
 
 class MeanAbsoluteError(LossFunction):
