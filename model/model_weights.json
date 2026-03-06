@@ -1,7 +1,7 @@
 {
     "slope": -0.8500868143146729,
     "intercept": 2.349972068789914e-16,
-    "normalizer_type": "minmax",
+    "normalizer_type": "zscore",
     "km_params": {
         "mean": 101066.25,
         "std": 51565.1899106445
