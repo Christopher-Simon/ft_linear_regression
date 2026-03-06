@@ -16,7 +16,6 @@ class Normalizer(ABC, Generic[T]):
     Abstract base class to enforce structure without hardcoding column names.
     """
 
-    # Tell the linter that params is of type T
     params: T
 
     def __init__(self, params: T | None = None) -> None:

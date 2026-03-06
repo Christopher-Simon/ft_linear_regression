@@ -85,7 +85,5 @@ def train(dataset_path: str = "data/data.csv") -> None:
 
 
 if __name__ == "__main__":
-    # If the user provides a command-line argument, use it as the path.
-    # e.g., `python src/train.py data/custom_data.csv`
     custom_path = sys.argv[1] if len(sys.argv) > 1 else "data/data.csv"
     train(custom_path)
