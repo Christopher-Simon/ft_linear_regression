@@ -13,9 +13,9 @@ import pandas as pd
 
 from evaluator.r_squared import r_squared
 from model.simple_linear_regression import SimpleLinearRegression
-from normalizers.minmax_normalizer import MinMaxNormalizer, MinMaxParams
+from normalizers.minmax_normalizer import MinMaxParams
 from normalizers.protocol_normalizers import Normalizer
-from normalizers.z_score import ZScoreParams
+from normalizers.z_score import ZScoreNormalizer, ZScoreParams
 from visualisation.data_graph import create_plot_callback, init_visualization
 
 
@@ -28,7 +28,7 @@ def get_normalizer_name(
     normalizer: Normalizer[ZScoreParams] | Normalizer[MinMaxParams],
 ) -> str:
     """Returns the enum string based on the normalizer instance."""
-    if isinstance(normalizer, MinMaxNormalizer):
+    if isinstance(normalizer, ZScoreNormalizer):
         return NormalizerType.MINMAX.value
     return NormalizerType.ZSCORE.value
 
@@ -76,8 +76,8 @@ def train(dataset_path: str = "data/data.csv") -> None:
     """
     x_raw, y_raw = load_and_clean_data(dataset_path)
 
-    km_normalizer = MinMaxNormalizer()
-    price_normalizer = MinMaxNormalizer()
+    km_normalizer = ZScoreNormalizer()
+    price_normalizer = ZScoreNormalizer()
     x = km_normalizer.fit_transform(x_raw)
     y = price_normalizer.fit_transform(y_raw)
 

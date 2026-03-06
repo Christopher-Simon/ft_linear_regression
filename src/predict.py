@@ -5,6 +5,7 @@ Predict module for the application.
 import json
 import os
 import sys
+from dataclasses import dataclass
 
 import numpy as np
 
@@ -12,6 +13,18 @@ from model.simple_linear_regression import SimpleLinearRegression
 from normalizers.minmax_normalizer import MinMaxNormalizer, MinMaxParams
 from normalizers.protocol_normalizers import Normalizer
 from normalizers.z_score import ZScoreNormalizer, ZScoreParams
+
+
+@dataclass
+class ModelParams:
+    """Dataclass to hold the extracted model parameters from JSON."""
+
+    slope: float
+    intercept: float
+    precision: float | None
+    norm_type: str
+    km_params_dict: dict[str, float]
+    price_params_dict: dict[str, float]
 
 
 def get_normalizer(
@@ -25,12 +38,12 @@ def get_normalizer(
     return ZScoreNormalizer(ZScoreParams(**params_dict))
 
 
-def predict(model_file: str = "model_weights.json") -> None:
+def init(model_file: str = "model_weights.json") -> ModelParams:
+    """Reads the model parameters from a file and returns a ModelParams dataclass."""
     slope = 0.0
     intercept = 0.0
     precision = None
 
-    # Defaults in case the file doesn't exist yet
     norm_type = "zscore"
     km_params_dict = {}
     price_params_dict = {}
@@ -43,7 +56,6 @@ def predict(model_file: str = "model_weights.json") -> None:
                 intercept = data.get("intercept", 0.0)
                 precision = data.get("precision_r2")
 
-                # Extract the dynamic dictionaries
                 norm_type = data.get("normalizer_type", "zscore")
                 km_params_dict = data.get("km_params", {})
                 price_params_dict = data.get("price_params", {})
@@ -53,10 +65,27 @@ def predict(model_file: str = "model_weights.json") -> None:
     else:
         print(f"Info: '{model_file}' not found. Using default weights (0).")
 
-    model = SimpleLinearRegression(slope=slope, intercept=intercept)
+    return ModelParams(
+        slope=slope,
+        intercept=intercept,
+        precision=precision,
+        norm_type=norm_type,
+        km_params_dict=km_params_dict,
+        price_params_dict=price_params_dict,
+    )
 
-    km_normalizer = get_normalizer(norm_type, km_params_dict)
-    price_normalizer = get_normalizer(norm_type, price_params_dict)
+
+def predict(model_file: str = "model_weights.json") -> None:
+    model_params = init(model_file)
+
+    model = SimpleLinearRegression(
+        slope=model_params.slope, intercept=model_params.intercept
+    )
+
+    km_normalizer = get_normalizer(model_params.norm_type, model_params.km_params_dict)
+    price_normalizer = get_normalizer(
+        model_params.norm_type, model_params.price_params_dict
+    )
 
     print("=========================================")
     print("        Car Price Predictor              ")
@@ -86,8 +115,10 @@ def predict(model_file: str = "model_weights.json") -> None:
 
             print(f"-> Estimated price for {mileage:,.2f} km: {estimated_price:,.2f} €")
 
-            if precision is not None:
-                print(f"   (Model Confidence / R²: {precision * 100:.2f}%)")
+            if model_params.precision is not None:
+                print(
+                    f"   (Model Confidence / R²: {model_params.precision * 100:.2f}%)"
+                )
 
         except ValueError:
             print("Invalid input. Please enter a numerical value.")
