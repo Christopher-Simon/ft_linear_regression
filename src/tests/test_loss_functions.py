@@ -6,9 +6,9 @@ from collections.abc import Callable
 
 import pytest
 
-from loss_functions.mean_absolute_error import MeanAbsoluteError
-from loss_functions.mean_squared_error import MeanSquaredError
-from loss_functions.sum_squared_error import SumSquaredError
+from src.loss_functions.mean_absolute_error import MeanAbsoluteError
+from src.loss_functions.mean_squared_error import MeanSquaredError
+from src.loss_functions.sum_squared_error import SumSquaredError
 
 
 @pytest.fixture

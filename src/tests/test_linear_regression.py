@@ -7,8 +7,8 @@ import numpy as np
 import pytest
 from sklearn.linear_model import LinearRegression as SkLinearRegression
 
-from loss_functions.mean_squared_error import MeanSquaredError
-from model.simple_linear_regression import SimpleLinearRegression
+from src.loss_functions.mean_squared_error import MeanSquaredError
+from src.model.simple_linear_regression import SimpleLinearRegression
 
 
 @pytest.fixture

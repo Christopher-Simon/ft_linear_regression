@@ -11,24 +11,26 @@ $(VENV_DIR)/bin/activate: pyproject.toml
 	@echo "Bootstrapping 'uv' via standard pip..."
 	@$(PIP) install --upgrade pip uv
 	@echo "Using 'uv' to install project dependencies ultra-fast..."
-	@$(UV) sync
+	@$(UV) sync --all-groups
 
 setup: $(VENV_DIR)/bin/activate
 
 
 train: setup
 	@echo "Running Training Program..."
-	@$(PYTHON) train.py $(ARGS)
+	@$(UV) run train.py $(ARGS)
 
 predict: setup
 	@echo "Running Prediction Program..."
-	@$(PYTHON) predict.py $(ARGS)
+	@$(UV) run predict.py $(ARGS)
 
 evaluate: setup
 	@echo "Running Evaluation Program..."
-	@$(PYTHON) evaluate.py $(ARGS)
+	@$(UV) run evaluate.py $(ARGS)
 
-
+test:
+	@echo "Running Evaluation Program..."
+	@$(UV) run pytest
 
 clean:
 	@echo "Cleaning cache and virtual environment..."

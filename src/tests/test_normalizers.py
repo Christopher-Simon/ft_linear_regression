@@ -4,23 +4,25 @@ Includes comparison against Scikit-Learn's preprocessing scalers.
 """
 
 import numpy as np
+import numpy.typing as npt
+
 import pytest
 from sklearn.preprocessing import MinMaxScaler as SkMinMaxScaler
 from sklearn.preprocessing import StandardScaler as SkStandardScaler
 
-from normalizers.minmax_normalizer import MinMaxNormalizer
-from normalizers.z_score import ZScoreNormalizer
+from src.normalizers.minmax_normalizer import MinMaxNormalizer
+from src.normalizers.z_score import ZScoreNormalizer
 
 
 @pytest.fixture
-def sample_data() -> np.ndarray:
+def sample_data() -> npt.NDArray[np.float64]:
     """
     Simple dataset with enough variance for testing.
     """
     return np.array([0.0, 5.0, 10.0, 15.0, 20.0])
 
 
-def test_zscore_vs_sklearn(sample_data: np.ndarray) -> None:
+def test_zscore_vs_sklearn(sample_data: npt.NDArray[np.float64]) -> None:
     """
     Compare custom ZScoreNormalizer against Scikit-Learn's StandardScaler.
     """
@@ -43,7 +45,7 @@ def test_zscore_vs_sklearn(sample_data: np.ndarray) -> None:
     np.testing.assert_array_almost_equal(custom_inverted, sk_inverted)
 
 
-def test_minmax_vs_sklearn(sample_data: np.ndarray) -> None:
+def test_minmax_vs_sklearn(sample_data: npt.NDArray[np.float64]) -> None:
     """
     Compare custom MinMaxNormalizer against Scikit-Learn's MinMaxScaler.
     """

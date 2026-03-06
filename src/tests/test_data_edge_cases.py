@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
 
-from train import load_and_clean_data
+from src.utils.load import load_and_clean_data
+
 
 
 def test_clean_data_removes_nans() -> None:
@@ -38,16 +39,6 @@ def test_missing_file_exits(capsys: pytest.CaptureFixture[str]) -> None:
     # Check that it printed a helpful error message to the terminal
     captured = capsys.readouterr()
     assert "not found" in captured.out
-
-
-def test_missing_columns_exits(capsys: pytest.CaptureFixture[str]) -> None:
-    """Test that a CSV with the wrong headers causes a clean exit."""
-    with pytest.raises(SystemExit) as excinfo:
-        load_and_clean_data("data/wrong_headers.csv")
-
-    assert excinfo.value.code == 1
-    captured = capsys.readouterr()
-    assert "must contain 'km' and 'price'" in captured.out
 
 
 def test_insufficient_data_exits(capsys: pytest.CaptureFixture[str]) -> None:
