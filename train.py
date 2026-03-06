@@ -15,7 +15,7 @@ from src.utils.read_model import get_normalizer_name
 from src.visualisation.data_graph import create_plot_callback, init_visualization
 
 
-def train(dataset_path: str = "data/data.csv") -> None:
+def train(dataset_path: str) -> None:
     """
     Main orchestrator for data loading, training, and saving.
     """

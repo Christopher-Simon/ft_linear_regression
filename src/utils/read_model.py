@@ -1,7 +1,7 @@
 import json
 import os
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import Enum
 
 from src.normalizers.minmax_normalizer import MinMaxNormalizer, MinMaxParams
 from src.normalizers.protocol_normalizers import Normalizer
@@ -57,7 +57,7 @@ def init(model_file: str = "model_weights.json") -> ModelParams:
     )
 
 
-class NormalizerType(StrEnum):
+class NormalizerType(str, Enum):
     ZSCORE = "zscore"
     MINMAX = "minmax"
 

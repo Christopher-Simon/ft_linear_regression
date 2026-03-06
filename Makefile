@@ -11,8 +11,7 @@ $(VENV_DIR)/bin/activate: pyproject.toml
 	@echo "Bootstrapping 'uv' via standard pip..."
 	@$(PIP) install --upgrade pip uv
 	@echo "Using 'uv' to install project dependencies ultra-fast..."
-	@$(UV) pip install .
-	@touch $(VENV_DIR)/bin/activate
+	@$(UV) sync
 
 setup: $(VENV_DIR)/bin/activate
 
