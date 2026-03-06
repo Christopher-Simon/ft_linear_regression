@@ -30,10 +30,6 @@ def evaluate(dataset_path: str, model_file: str) -> None:
 
     x = km_normalizer.transform(x_raw)
     y = price_normalizer.transform(y_raw)
-    print(
-        f"Loaded Weights -> Slope: {model_params.slope},\
-            Intercept: {model_params.intercept}"
-    )
 
     precision_r2 = r_squared(
         x_list=x.tolist(),
