@@ -1,46 +1,54 @@
-#///////////////////////////////////////////////////////////////////////////#
-#                               VARIABLES                                   #
-#///////////////////////////////////////////////////////////////////////////#
+# Variables
+VENV_DIR = .venv
+PYTHON = $(VENV_DIR)/bin/python
+PIP = $(VENV_DIR)/bin/pip
+UV = $(VENV_DIR)/bin/uv
 
-PYTHON_SRC_DIR := src
+# The default rule
+all: setup
 
-#///////////////////////////////////////////////////////////////////////////#
-#                               MANAGEMENT                                  #
-#///////////////////////////////////////////////////////////////////////////#
+# Create the venv, install uv with pip, then use uv for the heavy lifting!
+$(VENV_DIR)/bin/activate: pyproject.toml
+	@echo "Creating virtual environment..."
+	@python3 -m venv $(VENV_DIR)
+	@echo "Bootstrapping 'uv' via standard pip..."
+	@$(PIP) install --upgrade pip uv
+	@echo "Using 'uv' to install project dependencies ultra-fast..."
+	@$(UV) pip install .
+	@touch $(VENV_DIR)/bin/activate
 
-all: dev
+# Alias for the setup process
+setup: $(VENV_DIR)/bin/activate
 
-dev:
-	uv sync
+# --- Executable Targets ---
 
-check:
-	uv run ruff check --fix src/
+train: setup
+	@echo "Running Training Program..."
+	@$(PYTHON) train.py $(ARGS)
 
-format:
-	uv run ruff format src/
+predict: setup
+	@echo "Running Prediction Program..."
+	@$(PYTHON) predict.py $(ARGS)
 
-typecheck:
-	uv run mypy src/
+evaluate: setup
+	@echo "Running Evaluation Program..."
+	@$(PYTHON) evaluate.py $(ARGS)
 
-lint:
-	@echo "Starting linting..." > lint.log
-	@echo "--- Ruff Check ---" >> lint.log
-	-uv run ruff check --fix src/ >> lint.log 2>&1
-	@echo "\n--- Ruff Format ---" >> lint.log
-	-uv run ruff format src/ >> lint.log 2>&1
-	@echo "\n--- Mypy ---" >> lint.log
-	-uv run mypy src/ >> lint.log 2>&1
-	@echo "Linting complete. Check 'lint.log' for details."
+# --- Cleanup Targets ---
 
-test:
-	uv run pytest -s -vv src/tests/
 
 clean:
-	rm -rf .venv .pytest_cache .ruff_cache .mypy_cache __pycache__
-	find . -type d -name "__pycache__" -exec rm -rf {} +
+	@echo "Cleaning cache and virtual environment..."
+	@rm -rf $(VENV_DIR)
+	@find . -type d -name "__pycache__" -exec rm -r {} + 2>/dev/null || true
+	@find . -type d -name "*_cache" -exec rm -r {} + 2>/dev/null || true
+	@find . -type d -name "*.egg-info" -exec rm -r {} + 2>/dev/null || true
 
 fclean: clean
+	@echo "Removing model weights..."
+	@rm -f model_weights.json
+	@rm -f model/model_weights.json
 
-re: clean dev
+re: fclean all
 
-.PHONY: dev run lint format typecheck test clean fclean re
+.PHONY: all setup train predict evaluate clean fclean re

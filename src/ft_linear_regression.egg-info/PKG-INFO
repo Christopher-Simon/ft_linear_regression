@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: ft-linear-regression
+Version: 0.1.0
+Summary: An introduction to machine learning with linear regression
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: matplotlib>=3.10.8
+Requires-Dist: numpy>=2.4.2
+Requires-Dist: pandas>=3.0.0
+Requires-Dist: pydantic>=2.12.5
+Requires-Dist: python-dotenv>=1.2.1
+Requires-Dist: scikit-learn>=1.8.0
