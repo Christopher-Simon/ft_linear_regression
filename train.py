@@ -3,6 +3,7 @@ Main module for the application.
 """
 
 import json
+import os
 import sys
 
 import matplotlib.pyplot as plt
@@ -69,6 +70,7 @@ def train(dataset_path: str) -> None:
         "final_loss": final_loss,
     }
 
+    os.makedirs("model", exist_ok=True)
     with open("model/model_weights.json", "w") as f:
         json.dump(model_data, f, indent=4)
 
