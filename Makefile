@@ -18,15 +18,15 @@ setup: $(VENV_DIR)/bin/activate
 
 train: setup
 	@echo "Running Training Program..."
-	@$(UV) run train.py $(ARGS)
+	@$(PYTHON) train.py $(ARGS)
 
 predict: setup
 	@echo "Running Prediction Program..."
-	@$(UV) run predict.py $(ARGS)
+	@$(PYTHON) predict.py $(ARGS)
 
 evaluate: setup
 	@echo "Running Evaluation Program..."
-	@$(UV) run evaluate.py $(ARGS)
+	@$(PYTHON) evaluate.py $(ARGS)
 
 test:
 	@echo "Running Evaluation Program..."
