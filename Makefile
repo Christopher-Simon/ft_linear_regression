@@ -1,13 +1,10 @@
-# Variables
 VENV_DIR = .venv
 PYTHON = $(VENV_DIR)/bin/python
 PIP = $(VENV_DIR)/bin/pip
 UV = $(VENV_DIR)/bin/uv
 
-# The default rule
 all: setup
 
-# Create the venv, install uv with pip, then use uv for the heavy lifting!
 $(VENV_DIR)/bin/activate: pyproject.toml
 	@echo "Creating virtual environment..."
 	@python3 -m venv $(VENV_DIR)
@@ -17,10 +14,8 @@ $(VENV_DIR)/bin/activate: pyproject.toml
 	@$(UV) pip install .
 	@touch $(VENV_DIR)/bin/activate
 
-# Alias for the setup process
 setup: $(VENV_DIR)/bin/activate
 
-# --- Executable Targets ---
 
 train: setup
 	@echo "Running Training Program..."
@@ -34,7 +29,6 @@ evaluate: setup
 	@echo "Running Evaluation Program..."
 	@$(PYTHON) evaluate.py $(ARGS)
 
-# --- Cleanup Targets ---
 
 
 clean:
