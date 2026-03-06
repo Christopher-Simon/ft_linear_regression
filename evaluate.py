@@ -5,8 +5,8 @@ Evaluate module to calculate the precision of the trained algorithm.
 import sys
 
 from src.evaluator.r_squared import r_squared
+from src.utils.load import load_and_clean_data
 from src.utils.read_model import get_normalizer, init
-from train import load_and_clean_data
 
 
 def evaluate(dataset_path: str, model_file: str) -> None:
